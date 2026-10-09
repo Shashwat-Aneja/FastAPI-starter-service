@@ -10,10 +10,7 @@ router = APIRouter(
 
 def _validate_operands(x: float, y: float) -> None:
     if not math.isfinite(x) or not math.isfinite(y):
-        raise HTTPException(
-            status_code=422,
-            detail="Operands must be finite numbers.",
-        )
+        raise HTTPException(status_code=422, detail="Operands must be finite numbers.")
 
 
 @router.get("/add")
