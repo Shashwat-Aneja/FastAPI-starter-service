@@ -1,49 +1,71 @@
-# FastAPI Starter Service  
+# FastAPI Starter Service
 A clean, minimal, and production-ready FastAPI template designed for learning, prototyping, and building scalable Python backend services.
 
 This project showcases:
-- REST API fundamentals  
-- Structured routing  
-- Modular backend design  
-- Clean and readable Python code  
-- Practical experience with FastAPI and Uvicorn  
+- REST API fundamentals
+- Structured routing
+- Modular backend design
+- Clean and readable Python code
+- Practical experience with FastAPI and Uvicorn
 
-Perfect for beginners, students, and developers starting with backend APIs.
+## Features
+- Lightweight REST API
+- Modular routes (`/hello`, `/math`, `/time`)
+- Automatic interactive API docs at `/docs`
+- Health endpoint at `/healthz`
+- Finite-number validation for arithmetic inputs and results
+- Automated route tests
 
----
-
-# ⭐ Features
-
-- Fast, lightweight REST API  
-- Modular routes (`/hello`, `/math`, `/time`)  
-- Organized folder structure  
-- Automatic interactive API docs  
-- Minimal dependencies  
-- Easy to extend for larger projects  
-
----
-
-# 📁 Project Structure
+## Project Structure
+```text
 fastapi-starter-service/
-│
-├── main.py # App entry point
-├── requirements.txt # Dependencies
-│
-└── routes/
-├── hello.py # Basic greeting endpoint
-├── math.py # Add, subtract API
-└── time.py # Current time endpoint
-
----
-
-# 📦 Installation
-
-Create a virtual environment:
-
-```bash
-python -m venv venv
-source venv/bin/activate        # Linux/Mac
-venv\Scripts\activate           # Windows
+├── main.py
+├── requirements.txt
+├── routes/
+│   ├── hello.py
+│   ├── math_ops.py
+│   └── time_route.py
+└── tests/
+    └── test_math_routes.py
 ```
-Install dependencies:
-pip install fastapi uvicorn
+
+## Installation
+Create and activate a virtual environment.
+
+**macOS/Linux**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows PowerShell**
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Install the project and test dependencies:
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Run the API
+```bash
+uvicorn main:app --reload
+```
+
+Open the interactive API documentation at http://127.0.0.1:8000/docs.
+
+## Run Tests
+```bash
+python -m pytest -q
+```
+
+The math route tests cover normal arithmetic, division by zero, non-finite inputs, and arithmetic overflow.
+
+## Example Requests
+```bash
+curl "http://127.0.0.1:8000/math/add?x=4&y=7"
+curl "http://127.0.0.1:8000/time/now"
+curl "http://127.0.0.1:8000/healthz"
+```
