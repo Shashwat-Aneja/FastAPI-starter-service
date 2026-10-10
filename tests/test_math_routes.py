@@ -31,3 +31,18 @@ def test_multiplication_rejects_overflow_result():
 
     assert response.status_code == 422
     assert response.json()["detail"] == "Result is outside the supported numeric range."
+
+
+def test_subtract_returns_expected_result():
+    response = client.get("/math/subtract", params={"x": 9, "y": 4})
+
+    assert response.status_code == 200
+    assert response.json()["result"] == 5.0
+
+
+def test_divide_returns_expected_result():
+    response = client.get("/math/divide", params={"x": 9, "y": 3})
+
+    assert response.status_code == 200
+    assert response.json()["result"] == 3.0
+
