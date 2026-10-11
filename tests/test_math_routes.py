@@ -64,3 +64,11 @@ def test_arithmetic_routes_reject_overflow_results(endpoint, x, y):
 
     assert response.status_code == 422
     assert response.json()["detail"] == "Result is outside the supported numeric range."
+
+
+@pytest.mark.parametrize("endpoint", ["/math/add", "/math/subtract", "/math/multiply", "/math/divide"])
+def test_all_math_routes_reject_non_finite_operands(endpoint):
+    response = client.get(endpoint, params={"x": "inf", "y": 2})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Operands must be finite numbers."
