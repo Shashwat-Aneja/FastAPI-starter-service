@@ -46,3 +46,21 @@ def test_divide_returns_expected_result():
     assert response.status_code == 200
     assert response.json()["result"] == 3.0
 
+
+
+import pytest
+
+
+@pytest.mark.parametrize(
+    ("endpoint", "x", "y"),
+    [
+        ("/math/add", 1e308, 1e308),
+        ("/math/subtract", 1e308, -1e308),
+        ("/math/divide", 1e308, 1e-308),
+    ],
+)
+def test_arithmetic_routes_reject_overflow_results(endpoint, x, y):
+    response = client.get(endpoint, params={"x": x, "y": y})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Result is outside the supported numeric range."
