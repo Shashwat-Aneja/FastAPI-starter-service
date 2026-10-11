@@ -61,7 +61,7 @@ Open the interactive API documentation at http://127.0.0.1:8000/docs.
 python -m pytest -q
 ```
 
-The math route tests cover normal arithmetic, division by zero, non-finite inputs, and arithmetic overflow.
+The math route tests cover normal arithmetic, division by zero, non-finite inputs, and arithmetic overflow. Invalid or non-finite operands return HTTP 422; division by zero returns HTTP 400; non-finite arithmetic results return HTTP 422.
 
 ## Example Requests
 ```bash
