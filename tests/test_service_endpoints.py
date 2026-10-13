@@ -9,6 +9,7 @@ def test_health_endpoint_reports_healthy_status():
     response = client.get("/healthz")
 
     assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/json")
     assert response.json() == {"status": "healthy"}
 
 
