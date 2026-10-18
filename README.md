@@ -69,3 +69,14 @@ curl "http://127.0.0.1:8000/math/add?x=4&y=7"
 curl "http://127.0.0.1:8000/time/now"
 curl "http://127.0.0.1:8000/healthz"
 ```
+
+
+## Modulo endpoint
+
+The math router includes `GET /math/modulo?x=17&y=5`, which returns the remainder in the standard operation response shape:
+
+```json
+{"operation":"modulo","x":17.0,"y":5.0,"result":2.0}
+```
+
+The endpoint rejects non-finite operands with HTTP 422 and a zero divisor with HTTP 400.
