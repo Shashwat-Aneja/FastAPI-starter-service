@@ -47,3 +47,12 @@ def divide(x: float, y: float):
         raise HTTPException(status_code=400, detail="Cannot divide by zero.")
     result = _finite_result(x / y)
     return {"operation": "divide", "x": x, "y": y, "result": result}
+
+
+@router.get("/modulo")
+def modulo(x: float, y: float):
+    _validate_operands(x, y)
+    if y == 0:
+        raise HTTPException(status_code=400, detail="Cannot take modulo by zero.")
+    result = _finite_result(x % y)
+    return {"operation": "modulo", "x": x, "y": y, "result": result}
