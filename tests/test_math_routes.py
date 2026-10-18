@@ -72,3 +72,26 @@ def test_all_math_routes_reject_non_finite_operands(endpoint):
 
     assert response.status_code == 422
     assert response.json()["detail"] == "Operands must be finite numbers."
+
+
+def test_modulo_returns_remainder():
+    response = client.get("/math/modulo", params={"x": 17, "y": 5})
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "operation": "modulo", "x": 17.0, "y": 5.0, "result": 2.0
+    }
+
+
+def test_modulo_rejects_zero_divisor():
+    response = client.get("/math/modulo", params={"x": 17, "y": 0})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Cannot take modulo by zero."
+
+
+def test_modulo_rejects_non_finite_operands():
+    response = client.get("/math/modulo", params={"x": "inf", "y": 5})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Operands must be finite numbers."
