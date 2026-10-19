@@ -80,3 +80,8 @@ The math router includes `GET /math/modulo?x=17&y=5`, which returns the remainde
 ```
 
 The endpoint rejects non-finite operands with HTTP 422 and a zero divisor with HTTP 400.
+
+
+## Service metadata
+
+Use `GET /version` to retrieve the service title and configured application version as JSON. This is useful for quick deployment diagnostics without exposing environment variables or secrets.
