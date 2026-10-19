@@ -20,3 +20,13 @@ def test_root_endpoint_points_to_api_docs():
     payload = response.json()
     assert payload["message"]
     assert payload["docs"] == "/docs"
+
+
+def test_version_endpoint_exposes_service_metadata():
+    response = client.get("/version")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "service": "FastAPI Starter Service",
+        "version": "1.0.0",
+    }
