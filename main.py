@@ -20,3 +20,9 @@ def healthz():
 @app.get("/")
 def root():
     return {"message": "FastAPI Starter Service is running!", "docs": "/docs"}
+
+
+@app.get("/version")
+def version():
+    """Expose service metadata for deployment checks and diagnostics."""
+    return {"service": app.title, "version": app.version}
