@@ -33,4 +33,4 @@ def test_formatted_time_includes_utc_suffix():
     response = client.get("/time/formatted")
 
     assert response.status_code == 200
-    assert re.fullmatch(r"\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} UTC", response.json()["formatted_time"])
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} UTC", response.json()["formatted_time"])
