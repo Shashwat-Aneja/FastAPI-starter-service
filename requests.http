@@ -1,0 +1,15 @@
+### Root metadata
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+### Liveness
+GET http://127.0.0.1:8000/healthz
+Accept: application/json
+
+### Version metadata
+GET http://127.0.0.1:8000/version
+Accept: application/json
+
+### OpenAPI schema
+GET http://127.0.0.1:8000/openapi.json
+Accept: application/json
