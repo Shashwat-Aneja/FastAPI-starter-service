@@ -22,6 +22,17 @@ def test_root_endpoint_points_to_api_docs():
     assert payload["docs"] == "/docs"
 
 
+def test_readiness_endpoint_exposes_service_metadata():
+    response = client.get("/readyz")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ready",
+        "service": app.title,
+        "version": app.version,
+    }
+
+
 def test_version_endpoint_exposes_service_metadata():
     response = client.get("/version")
 
