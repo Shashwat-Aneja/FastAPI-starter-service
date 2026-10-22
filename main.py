@@ -22,6 +22,12 @@ def root():
     return {"message": "FastAPI Starter Service is running!", "docs": "/docs"}
 
 
+@app.get("/readyz")
+def readyz():
+    """Expose a lightweight readiness probe for deployment orchestration."""
+    return {"status": "ready", "service": app.title, "version": app.version}
+
+
 @app.get("/version")
 def version():
     """Expose service metadata for deployment checks and diagnostics."""
