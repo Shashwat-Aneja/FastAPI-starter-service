@@ -19,6 +19,12 @@ def get_timestamp():
     return {"timestamp": int(utc_now().timestamp())}
 
 
+@router.get("/timestamp-ms")
+def get_timestamp_ms():
+    """Return the current Unix timestamp in milliseconds for JavaScript clients."""
+    return int(utc_now().timestamp() * 1000)
+
+
 @router.get("/formatted")
 def get_formatted_time():
     return {"formatted_time": utc_now().strftime("%Y-%m-%d %H:%M:%S UTC")}
