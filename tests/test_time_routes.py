@@ -34,3 +34,15 @@ def test_formatted_time_uses_explicit_utc_label():
     value = response.json()["formatted_time"]
     assert value.endswith(" UTC")
     datetime.strptime(value, "%Y-%m-%d %H:%M:%S UTC")
+
+
+def test_timestamp_ms_returns_current_unix_milliseconds():
+    before = int(datetime.now(timezone.utc).timestamp() * 1000)
+
+    response = client.get("/time/timestamp-ms")
+
+    after = int(datetime.now(timezone.utc).timestamp() * 1000)
+    assert response.status_code == 200
+    value = response.json()
+    assert isinstance(value, int)
+    assert before <= value <= after
