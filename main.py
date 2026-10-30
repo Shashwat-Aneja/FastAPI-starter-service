@@ -18,6 +18,7 @@ async def attach_request_id(request: Request, call_next):
     """Propagate a valid request ID or generate one for tracing a request."""
     incoming_id = request.headers.get("x-request-id", "")
     request_id = incoming_id if REQUEST_ID_PATTERN.fullmatch(incoming_id) else str(uuid4())
+    request.state.request_id = request_id
     response = await call_next(request)
     response.headers["X-Request-ID"] = request_id
     return response
