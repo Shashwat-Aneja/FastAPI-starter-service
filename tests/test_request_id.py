@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from fastapi import Request
 from fastapi.testclient import TestClient
 
 from main import app
@@ -27,3 +28,17 @@ def test_malformed_request_id_is_replaced():
     assert response.status_code == 200
     assert response.headers["x-request-id"] != "bad request id"
     UUID(response.headers["x-request-id"])
+
+
+def test_request_id_is_available_to_route_handlers():
+    def read_request_id(request: Request):
+        return {"request_id": request.state.request_id}
+
+    app.add_api_route("/_test/request-id-state", read_request_id, methods=["GET"])
+    response = client.get(
+        "/_test/request-id-state",
+        headers={"X-Request-ID": "trace-from-client"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"request_id": "trace-from-client"}
