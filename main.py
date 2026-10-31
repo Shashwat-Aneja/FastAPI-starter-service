@@ -1,4 +1,5 @@
 import re
+import time
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
@@ -19,8 +20,11 @@ async def attach_request_id(request: Request, call_next):
     incoming_id = request.headers.get("x-request-id", "")
     request_id = incoming_id if REQUEST_ID_PATTERN.fullmatch(incoming_id) else str(uuid4())
     request.state.request_id = request_id
+    started_at = time.perf_counter()
     response = await call_next(request)
+    elapsed_ms = (time.perf_counter() - started_at) * 1000
     response.headers["X-Request-ID"] = request_id
+    response.headers["X-Process-Time-Ms"] = f"{elapsed_ms:.3f}"
     return response
 
 
