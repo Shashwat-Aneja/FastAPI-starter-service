@@ -42,3 +42,24 @@ def test_request_id_is_available_to_route_handlers():
 
     assert response.status_code == 200
     assert response.json() == {"request_id": "trace-from-client"}
+
+def _raise_unhandled_error():
+    raise RuntimeError("internal diagnostic secret")
+
+
+app.add_api_route("/_test/unhandled-error", _raise_unhandled_error, methods=["GET"])
+
+
+def test_unhandled_errors_keep_request_diagnostics_without_leaking_details():
+    error_client = TestClient(app, raise_server_exceptions=False)
+    response = error_client.get(
+        "/_test/unhandled-error",
+        headers={"X-Request-ID": "trace-error-42"},
+    )
+
+    assert response.status_code == 500
+    assert response.headers["x-request-id"] == "trace-error-42"
+    assert float(response.headers["x-process-time-ms"]) >= 0
+    assert response.json() == {"detail": "Internal Server Error"}
+    assert "internal diagnostic secret" not in response.text
+
