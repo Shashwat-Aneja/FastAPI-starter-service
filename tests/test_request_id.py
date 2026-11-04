@@ -63,3 +63,25 @@ def test_unhandled_errors_keep_request_diagnostics_without_leaking_details():
     assert response.json() == {"detail": "Internal Server Error"}
     assert "internal diagnostic secret" not in response.text
 
+
+
+def test_successful_requests_emit_structured_access_log(caplog):
+    import logging
+
+    with caplog.at_level(logging.INFO, logger="main"):
+        response = client.get(
+            "/healthz?token=do-not-log",
+            headers={"X-Request-ID": "trace-log-42"},
+        )
+
+    assert response.status_code == 200
+    record = next(
+        record for record in caplog.records
+        if record.getMessage() == "HTTP request completed"
+    )
+    assert record.request_id == "trace-log-42"
+    assert record.http_method == "GET"
+    assert record.http_path == "/healthz"
+    assert record.http_status_code == 200
+    assert record.duration_ms >= 0
+    assert "do-not-log" not in record.getMessage()
