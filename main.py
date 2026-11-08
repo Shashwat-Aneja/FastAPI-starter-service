@@ -4,6 +4,7 @@ import time
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from routes import hello, math_ops, time_route
 
@@ -42,6 +43,38 @@ async def attach_request_id(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     response.headers["X-Process-Time-Ms"] = f"{elapsed_ms:.3f}"
     return response
+
+
+@app.exception_handler(RequestValidationError)
+async def handle_request_validation_error(request: Request, exc: RequestValidationError):
+    """Return useful validation locations without echoing submitted values."""
+    request_id = getattr(request.state, "request_id", None) or str(uuid4())
+    started_at = getattr(request.state, "started_at", None)
+    elapsed_ms = (
+        (time.perf_counter() - started_at) * 1000
+        if isinstance(started_at, (int, float))
+        else 0.0
+    )
+    errors = [
+        {
+            "location": [str(part) for part in error.get("loc", ())],
+            "message": error.get("msg", "Invalid value"),
+            "type": error.get("type", "value_error"),
+        }
+        for error in exc.errors()
+    ]
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": "Request validation failed",
+            "errors": errors,
+            "request_id": request_id,
+        },
+        headers={
+            "X-Request-ID": request_id,
+            "X-Process-Time-Ms": f"{elapsed_ms:.3f}",
+        },
+    )
 
 
 @app.exception_handler(Exception)
