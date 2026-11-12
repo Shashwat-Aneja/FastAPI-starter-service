@@ -56,3 +56,14 @@ def modulo(x: float, y: float):
         raise HTTPException(status_code=400, detail="Cannot take modulo by zero.")
     result = _finite_result(x % y)
     return {"operation": "modulo", "x": x, "y": y, "result": result}
+
+
+@router.get("/power")
+def power(x: float, y: float):
+    """Raise a finite base to a finite exponent within real-number bounds."""
+    _validate_operands(x, y)
+    try:
+        result = math.pow(x, y)
+    except (ValueError, OverflowError):
+        raise HTTPException(status_code=422, detail="Power is undefined or outside the supported numeric range.")
+    return {"operation": "power", "x": x, "y": y, "result": _finite_result(result)}
