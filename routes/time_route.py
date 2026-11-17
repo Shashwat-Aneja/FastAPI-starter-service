@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+from fastapi import APIRouter, HTTPException, Query
 
 router = APIRouter(prefix="/time", tags=["Time"])
 
@@ -29,3 +31,13 @@ def get_timestamp_ms():
 @router.get("/formatted")
 def get_formatted_time():
     return {"formatted_time": utc_now().strftime("%Y-%m-%d %H:%M:%S UTC")}
+
+
+@router.get("/zone")
+def get_zoned_time(name: str = Query(default="UTC", min_length=1, max_length=100)):
+    """Convert the same UTC instant to a named IANA timezone."""
+    try:
+        zone = ZoneInfo(name)
+    except (ZoneInfoNotFoundError, ValueError):
+        raise HTTPException(status_code=422, detail="Unknown IANA timezone.")
+    return {"timezone": name, "current_time": utc_now().astimezone(zone).isoformat()}

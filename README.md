@@ -87,3 +87,5 @@ The endpoint rejects non-finite operands with HTTP 422 and a zero divisor with H
 Use `GET /version` to retrieve the service title and configured application version as JSON. This is useful for quick deployment diagnostics without exposing environment variables or secrets.
 
 Both `/healthz` and `/readyz` support HEAD probes with no response body. Health responses use `Cache-Control: no-store` to keep proxy caches from serving stale health status.
+
+`GET /time/zone?name=Asia/Kolkata` returns the current instant with the requested IANA timezone offset. Unknown zones return HTTP 422.
