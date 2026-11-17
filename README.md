@@ -85,3 +85,5 @@ The endpoint rejects non-finite operands with HTTP 422 and a zero divisor with H
 ## Service metadata
 
 Use `GET /version` to retrieve the service title and configured application version as JSON. This is useful for quick deployment diagnostics without exposing environment variables or secrets.
+
+Both `/healthz` and `/readyz` support HEAD probes with no response body. Health responses use `Cache-Control: no-store` to keep proxy caches from serving stale health status.
