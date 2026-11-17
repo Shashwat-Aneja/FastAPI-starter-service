@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from routes import hello, math_ops, time_route
 
 REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
@@ -40,6 +40,8 @@ async def attach_request_id(request: Request, call_next):
             "duration_ms": round(elapsed_ms, 3),
         },
     )
+    if request.url.path in {"/healthz", "/readyz"}:
+        response.headers["Cache-Control"] = "no-store"
     response.headers["X-Request-ID"] = request_id
     response.headers["X-Process-Time-Ms"] = f"{elapsed_ms:.3f}"
     return response
@@ -127,3 +129,10 @@ def readyz():
 def version():
     """Expose service metadata for deployment checks and diagnostics."""
     return {"service": app.title, "version": app.version}
+
+
+@app.head("/healthz", include_in_schema=False)
+@app.head("/readyz", include_in_schema=False)
+def head_probe():
+    """Allow lightweight orchestration checks without transferring a JSON body."""
+    return Response(status_code=200, headers={"Cache-Control": "no-store"})
