@@ -94,13 +94,13 @@ async def handle_unhandled_exception(request: Request, exc: Exception):
         exc_info=exc,
         extra={"request_id": request_id},
     )
+    headers = {"X-Request-ID": request_id, "X-Process-Time-Ms": f"{elapsed_ms:.3f}"}
+    if request.url.path in {"/healthz", "/readyz"}:
+        headers["Cache-Control"] = "no-store"
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal Server Error"},
-        headers={
-            "X-Request-ID": request_id,
-            "X-Process-Time-Ms": f"{elapsed_ms:.3f}",
-        },
+        headers=headers,
     )
 
 
