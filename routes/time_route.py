@@ -16,16 +16,21 @@ def get_current_time():
     return {"current_time": utc_now().isoformat().replace("+00:00", "Z")}
 
 
+def _unix_microseconds(instant):
+    delta = instant - datetime(1970, 1, 1, tzinfo=timezone.utc)
+    return (delta.days * 86400 + delta.seconds) * 1_000_000 + delta.microseconds
+
+
 @router.get("/timestamp")
 def get_timestamp():
-    return {"timestamp": int(utc_now().timestamp())}
+    return {"timestamp": _unix_microseconds(utc_now()) // 1_000_000}
 
 
 @router.get("/timestamp-ms")
 def get_timestamp_ms():
     """Return the current Unix timestamp in milliseconds for JavaScript clients."""
     instant = utc_now()
-    return int(instant.timestamp()) * 1000 + instant.microsecond // 1000
+    return _unix_microseconds(instant) // 1000
 
 
 @router.get("/formatted")
