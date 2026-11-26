@@ -89,3 +89,5 @@ Use `GET /version` to retrieve the service title and configured application vers
 Both `/healthz` and `/readyz` support HEAD probes with no response body. Health responses use `Cache-Control: no-store` to keep proxy caches from serving stale health status.
 
 `GET /time/zone?name=Asia/Kolkata` returns the current instant with the requested IANA timezone offset. Unknown zones return HTTP 422.
+
+`GET /math/statistics?values=1&values=2` returns count, minimum, maximum and an overflow-safe finite mean for 1–1000 repeated finite numeric values. Empty, non-finite or over-budget requests return 422; no external service is called.
