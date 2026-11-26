@@ -46,3 +46,17 @@ def get_zoned_time(name: str = Query(default="UTC", min_length=1, max_length=100
     except (ZoneInfoNotFoundError, ValueError):
         raise HTTPException(status_code=422, detail="Unknown IANA timezone.")
     return {"timezone": name, "current_time": utc_now().astimezone(zone).isoformat()}
+
+
+@router.get("/convert")
+def convert_time(instant: str = Query(..., min_length=1, max_length=100), name: str = Query(default="UTC", min_length=1, max_length=100)):
+    """Convert an offset-aware ISO 8601 instant to an IANA time zone."""
+    try:
+        parsed = datetime.fromisoformat(instant.strip().replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError("An explicit UTC or numeric offset is required")
+        zone = ZoneInfo(name)
+        result = parsed.astimezone(zone)
+    except (ValueError, OverflowError, ZoneInfoNotFoundError):
+        raise HTTPException(status_code=422, detail="Provide a supported offset-aware instant and IANA timezone.")
+    return {"timezone": name, "current_time": result.isoformat()}

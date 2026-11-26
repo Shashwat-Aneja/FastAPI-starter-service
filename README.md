@@ -91,3 +91,5 @@ Both `/healthz` and `/readyz` support HEAD probes with no response body. Health 
 `GET /time/zone?name=Asia/Kolkata` returns the current instant with the requested IANA timezone offset. Unknown zones return HTTP 422.
 
 `GET /math/statistics?values=1&values=2` returns count, minimum, maximum and an overflow-safe finite mean for 1–1000 repeated finite numeric values. Empty, non-finite or over-budget requests return 422; no external service is called.
+
+`GET /time/convert?instant=2026-11-26T00:00:00Z&name=Asia/Kolkata` converts a supplied ISO 8601 instant without consulting the wall clock. An explicit UTC/numeric offset is required; naive dates, unsupported zones and out-of-range conversions return 422.
