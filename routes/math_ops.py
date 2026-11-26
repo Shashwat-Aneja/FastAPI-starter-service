@@ -1,6 +1,8 @@
 import math
+from fractions import Fraction
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
+from typing import List
 
 router = APIRouter(
     prefix="/math",
@@ -67,3 +69,16 @@ def power(x: float, y: float):
     except (ValueError, OverflowError):
         raise HTTPException(status_code=422, detail="Power is undefined or outside the supported numeric range.")
     return {"operation": "power", "x": x, "y": y, "result": _finite_result(result)}
+
+
+@router.get("/statistics")
+def statistics(values: List[float] = Query(...)):
+    """Summarize 1–1000 finite values without overflowing a representable mean."""
+    if not 1 <= len(values) <= 1000 or any(not math.isfinite(value) for value in values):
+        raise HTTPException(status_code=422, detail="Provide 1–1000 finite numeric values.")
+    try:
+        mean = math.fsum(values) / len(values)
+    except OverflowError:
+        total = sum((Fraction.from_float(value) for value in values), Fraction())
+        mean = float(total / len(values))
+    return {"operation": "statistics", "count": len(values), "minimum": min(values), "maximum": max(values), "mean": _finite_result(mean)}
