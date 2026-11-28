@@ -82,3 +82,11 @@ def statistics(values: List[float] = Query(...)):
         total = sum((Fraction.from_float(value) for value in values), Fraction())
         mean = float(total / len(values))
     return {"operation": "statistics", "count": len(values), "minimum": min(values), "maximum": max(values), "mean": _finite_result(mean)}
+
+
+@router.get("/hypot")
+def hypot(values: List[float] = Query(...)):
+    """Compute a stable Euclidean norm over 1–1000 finite coordinates."""
+    if not 1 <= len(values) <= 1000 or any(not math.isfinite(value) for value in values):
+        raise HTTPException(status_code=422, detail="Provide 1–1000 finite numeric values.")
+    return {"operation": "hypot", "count": len(values), "result": _finite_result(math.hypot(*values))}
