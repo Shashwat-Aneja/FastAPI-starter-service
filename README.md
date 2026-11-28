@@ -95,3 +95,5 @@ Both `/healthz` and `/readyz` support HEAD probes with no response body. Health 
 `GET /time/convert?instant=2026-11-26T00:00:00Z&name=Asia/Kolkata` converts a supplied ISO 8601 instant without consulting the wall clock. An explicit UTC/numeric offset is required; naive dates, unsupported zones and out-of-range conversions return 422.
 
 `GET /math/hypot?values=3&values=4` returns a stable Euclidean norm. Supply 1–1000 finite coordinates; an unrepresentable result returns 422.
+
+`create_app(cors_origins=["https://example.com"])` builds an isolated service with opt-in browser CORS for GET/HEAD and X-Request-ID requests. Credentials are disabled. The default exported `app` retains CORS disabled. Configure literal trusted origins (or an explicit wildcard) in your server entry point; this factory does not deploy anything.
